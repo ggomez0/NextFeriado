@@ -46,7 +46,7 @@ function App() {
 
   return (
     <div className='container'>
-      {loading ? <h1>Loading...</h1> :
+      {loading ? <h1>Cargando...</h1> :
         <>
           <h1>Quedan {getDifferenceInDays().days} días para el próximo feriado</h1>
           <p>Feriado {getDifferenceInDays().tipo} </p>
