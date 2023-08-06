@@ -58,12 +58,12 @@ function App() {
   }
 
   return (
-    <div className='container'>
-      {loading ? <h1>Cargando...</h1> :
+    <div className='flex flex-col mx-auto min-h-screen items-center justify-center text-center space-y-3'>
+      {loading ? <span className="loading loading-spinner loading-lg"></span>:
         <>
-          <h1>Quedan {getDifferenceInDays().days} días para el próximo feriado</h1>
-          <p>Feriado {getDifferenceInDays().tipo} </p>
-          <p>{getDifferenceInDays().dia} de {getMonthName(getDifferenceInDays().mes)} - <a href={getDifferenceInDays().url}>{getDifferenceInDays().name}</a> </p>
+          <h1 className="font-bold text-xl md:text-2xl lg:text-3xl xl:text-5xl ">Quedan {getDifferenceInDays().days} días para el próximo feriado</h1>
+          <h3 className=''>{getDifferenceInDays().dia} de {getMonthName(getDifferenceInDays().mes)} - <a className='link link-info link-hover' href={getDifferenceInDays().url}>{getDifferenceInDays().name}</a> </h3>
+          <p className=''>Feriado {getDifferenceInDays().tipo} </p>
         </>
       }
     </div>
