@@ -9,52 +9,61 @@ function App() {
   const [nextHoliday, setNextHoliday] = useState(null)
 
   useEffect(() => {
-    const now = new Date();
-    const year = now.getFullYear();
+    const now = new Date()
+    const year = now.getFullYear()
 
     axios.get(getURL(year))
       .then(({ data }) => {
-        const nextHoliday = getNextHoliday(data, now);
-        setNextHoliday(nextHoliday);
-        setLoading(false);
-      });
-  }, []);
+        const nextHoliday = getNextHoliday(data, now)
+        setNextHoliday(nextHoliday)
+        setLoading(false)
+      })
+  }, [])
 
-  function getNextHoliday(holidays, currentDate) {
-    const nowMonth = currentDate.getMonth() + 1;
-    const nowDay = currentDate.getDate();
+  function getNextHoliday (holidays, currentDate) {
+    const nowMonth = currentDate.getMonth() + 1
+    const nowDay = currentDate.getDate()
 
-    let nextHoliday = holidays.find(h => h.mes === nowMonth && h.dia >= nowDay);
+    let nextHoliday = holidays.find(h => h.mes >= nowMonth && h.dia >= nowDay)
+    console.log('nextHoliday', nextHoliday)
 
     if (!nextHoliday) {
-      nextHoliday = holidays[0];
+      nextHoliday = holidays[0]
+      console.log('nextHoliday1', nextHoliday)
     }
 
-    return nextHoliday;
+    return nextHoliday
   }
 
-  function getDifferenceInDays() {
+  function getDifferenceInDays () {
     if (nextHoliday) {
-      const now = new Date();
-      const nextHolidayDate = new Date(now.getFullYear(), nextHoliday.mes - 1, nextHoliday.dia);
-      const differenceInMilliseconds = nextHolidayDate.getTime() - now.getTime();
-      const differenceInDays = Math.round(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+      const now = new Date()
+      const nextHolidayDate = new Date(now.getFullYear(), nextHoliday.mes - 1, nextHoliday.dia)
+      const differenceInMilliseconds = nextHolidayDate.getTime() - now.getTime()
+      const differenceInDays = Math.round(differenceInMilliseconds / (1000 * 60 * 60 * 24))
       return { name: nextHoliday.motivo, days: differenceInDays, url: nextHoliday.info, tipo: nextHoliday.tipo, dia: nextHoliday.dia, mes: nextHoliday.mes}
     }
-    return null;
+    return null
   }
 
-  function getMonthName(monthNumber) {
+  function getMonthName (monthNumber) {
     const monthNames = [
       'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
       'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
-    ];
+    ]
 
     if (monthNumber >= 1 && monthNumber <= 12) {
       return monthNames[monthNumber - 1];
     }
+    return null
+  }
 
-    return null;
+  function isholidaytoday () {
+    const now = new Date()
+    const nowMonth = now.getMonth() + 1
+    const nowDay = now.getDate()
+    const nextHoliday = getNextHoliday()
+    return (nextHoliday.dia === nowDay && nextHoliday.mes === nowMonth)
   }
 
   return (
@@ -67,7 +76,7 @@ function App() {
         </>
       }
     </div>
-  );
+  )
 }
 
 export default App
