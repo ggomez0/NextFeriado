@@ -6,33 +6,43 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [nextHoliday, setNextHoliday] = useState(null)
 
+  //API utilizada: https://github.com/ggomez0/FeriadosAR-API
+  let geturl ='https://argentinaferiados-api.vercel.app/'
+
   useEffect(() => {
     const now = new Date()
     const year = now.getFullYear()
 
-    axios.get('https://argentinaferiados-api.vercel.app/')
-      .then(({ data }) => {
-        console.log(data)
-        const nextHoliday = getNextHoliday(data, now)
+    axios.get(geturl)
+      .then(( data ) => {
+        console.log(data);
+        const nextHoliday = getNextHoliday(data, now)        
         setNextHoliday(nextHoliday)
         setLoading(false)
       })
+      .catch(error => {
+        console.error("Error:", error);
+      });
   }, [])
 
-  function getNextHoliday (holidays, currentDate) {
-    const nowMonth = currentDate.getMonth() + 1
-    const nowDay = currentDate.getDate()
-
-    let nextHoliday = holidays.find(h => h.mes >= nowMonth && h.dia >= nowDay)
-    console.log('nextHoliday', nextHoliday)
-
-    if (!nextHoliday) {
-      nextHoliday = holidays[0]
-      console.log('nextHoliday1', nextHoliday)
-    }
-
-    return nextHoliday
+  function getNextHoliday(holidays, currentDate) {
+    const nowMonth = currentDate.getMonth() + 1;
+    const nowDay = currentDate.getDate();
+  
+    let nextHoliday = holidays.data.Feriados.find(h => {
+      // Convertir la fecha del feriado a un objeto Date
+      const holidayDate = new Date(currentDate.getFullYear(), h.mes - 1, h.dia);
+      console.log(holidayDate);
+  
+      // Verificar si la fecha del feriado es igual o posterior a la fecha actual
+      return holidayDate >= currentDate;
+    });
+  
+    console.log('nextHoliday', nextHoliday);
+  
+    return nextHoliday;
   }
+  
 
   function getDifferenceInDays () {
     if (nextHoliday) {
