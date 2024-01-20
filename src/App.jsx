@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css'
 
-const getURL = year => `https://nolaborables.com.ar/api/v2/feriados/${year}`
-
 function App() {
   const [loading, setLoading] = useState(true)
   const [nextHoliday, setNextHoliday] = useState(null)
@@ -12,8 +10,9 @@ function App() {
     const now = new Date()
     const year = now.getFullYear()
 
-    axios.get(getURL(year))
+    axios.get('https://argentinaferiados-api.vercel.app/')
       .then(({ data }) => {
+        console.log(data)
         const nextHoliday = getNextHoliday(data, now)
         setNextHoliday(nextHoliday)
         setLoading(false)
