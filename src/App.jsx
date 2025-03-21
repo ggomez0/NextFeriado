@@ -13,9 +13,8 @@ function App() {
     const now = new Date()
     const year = now.getFullYear()
 
-    axios.get(geturl)
+    axios.get(geturl + year)
       .then(( data ) => {
-        console.log(data);
         const nextHoliday = getNextHoliday(data, now)        
         setNextHoliday(nextHoliday)
         setLoading(false)
@@ -26,33 +25,33 @@ function App() {
   }, [])
 
   function getNextHoliday(holidays, currentDate) {
-    const nowMonth = currentDate.getMonth() + 1;
-    const nowDay = currentDate.getDate();
+    const formattedDate = currentDate.toISOString().split('T')[0];
   
-    let nextHoliday = holidays.data.Feriados.find(h => {
-      // Convertir la fecha del feriado a un objeto Date
-      const holidayDate = new Date(currentDate.getFullYear(), h.mes - 1, h.dia);
-      console.log(holidayDate);
-  
-      // Verificar si la fecha del feriado es igual o posterior a la fecha actual
-      return holidayDate >= currentDate;
+    const nextHoliday = holidays.data.find(h => {
+      return h.fecha >= formattedDate;
     });
-  
-    console.log('nextHoliday', nextHoliday);
   
     return nextHoliday;
   }
   
 
-  function getDifferenceInDays () {
+  function getDifferenceInDays() {
     if (nextHoliday) {
-      const now = new Date()
-      const nextHolidayDate = new Date(now.getFullYear(), nextHoliday.mes - 1, nextHoliday.dia)
-      const differenceInMilliseconds = nextHolidayDate.getTime() - now.getTime()
-      const differenceInDays = Math.round(differenceInMilliseconds / (1000 * 60 * 60 * 24))
-      return { name: nextHoliday.motivo, days: differenceInDays, url: nextHoliday.info, tipo: nextHoliday.tipo, dia: nextHoliday.dia, mes: nextHoliday.mes}
+      const now = new Date();
+      const holidayDate = new Date(nextHoliday.fecha);
+      const differenceInMilliseconds = holidayDate.getTime() - now.getTime();
+      const differenceInDays = Math.ceil(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+      
+      return {
+        name: nextHoliday.motivo,
+        days: differenceInDays,
+        url: nextHoliday.info,
+        tipo: nextHoliday.tipo,
+        dia: holidayDate.getDate(),
+        mes: holidayDate.getMonth() + 1
+      };
     }
-    return null
+    return null;
   }
 
   function getMonthName (monthNumber) {
@@ -80,7 +79,7 @@ function App() {
       {loading ? <span className="loading loading-spinner loading-lg"></span>:
         <>
           <h1 className="font-bold text-xl md:text-2xl lg:text-3xl xl:text-5xl ">Quedan {getDifferenceInDays().days} días para el próximo feriado</h1>
-          <h3 className=''>{getDifferenceInDays().dia} de {getMonthName(getDifferenceInDays().mes)} - <a className='link link-info link-hover' href={getDifferenceInDays().url}>{getDifferenceInDays().name}</a> </h3>
+          <h3 className=''>{getDifferenceInDays().dia} de {getMonthName(getDifferenceInDays().mes)} - <a target="_blank" className='link link-info link-hover' href={getDifferenceInDays().url}>{nextHoliday.nombre}</a> </h3>
           <p className=''>Feriado {getDifferenceInDays().tipo} </p>
         </>
       }
